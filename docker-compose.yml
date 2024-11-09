@@ -1,0 +1,37 @@
+version: '3'
+
+services:
+  app:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      # Application
+      - HOST=0.0.0.0
+      - PORT=8000
+      - WEB_CONCURRENCY=1
+      # GDAL config
+      - CPL_TMPDIR=/tmp
+      - GDAL_CACHEMAX=75%
+      - GDAL_INGESTED_BYTES_AT_OPEN=32768
+      - GDAL_DISABLE_READDIR_ON_OPEN=EMPTY_DIR
+      - GDAL_HTTP_MERGE_CONSECUTIVE_RANGES=YES
+      - GDAL_HTTP_MULTIPLEX=YES
+      - GDAL_HTTP_VERSION=2
+      - PYTHONWARNINGS=ignore
+      - VSI_CACHE=TRUE
+      - VSI_CACHE_SIZE=536870912
+      # GDAL VSI Config
+      # https://gdal.org/user/virtual_file_systems.html#vsis3-aws-s3-files
+      # https://gdal.org/user/virtual_file_systems.html#vsigs-google-cloud-storage-files
+      # https://gdal.org/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files
+      # - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      # - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      # rio-tiler config
+      # - RIO_TILER_MAX_THREADS=
+      # Application config
+      # - APP_CORS_ORIGIN=url.io,url.xyz
+      # - APP_CACHECONTROL=public, max-age=3600
