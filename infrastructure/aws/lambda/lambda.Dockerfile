@@ -1,11 +1,11 @@
-ARG PYTHON_VERSION=3.12
+ARG PYTHON_VERSION=3.11
 
 FROM public.ecr.aws/lambda/python:${PYTHON_VERSION}
 
 WORKDIR /tmp
 
 # Install system dependencies to compile (numexpr)
-RUN dnf install -y gcc-c++
+RUN yum install -y gcc-c++
 
 COPY runtimes/ /tmp/runtimes
 
@@ -16,7 +16,7 @@ COPY runtimes/ /tmp/runtimes
 # we have to force using old package version that seems `almost` compatible with Lambda env botocore
 # https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
 RUN pip install --upgrade pip
-RUN pip install /tmp/runtimes "mangum>=0.10.0" "aiobotocore==2.13.3" -t /asset --no-binary pydantic
+RUN pip install /tmp/runtimes "mangum>=0.10.0" "aiobotocore==2.13.3" -t /asset --no-binary pydantic,numpy,pandas,xarray
 
 # Reduce package size and remove useless files
 RUN cd /asset && find . -type f -name '*.pyc' | while read f; do n=$(echo $f | sed 's/__pycache__\///' | sed 's/.cpython-[0-9]*//'); cp $f $n; done;
@@ -31,5 +31,8 @@ RUN rm -rdf /asset/botocore*
 RUN dnf remove -y gcc-c++
 
 COPY infrastructure/aws/lambda/handler.py /asset/handler.py
+
+WORKDIR /asset
+RUN python -c "from handler import handler; print('All Good')"
 
 CMD ["echo", "hello world"]

@@ -5,7 +5,7 @@ services:
     platform: linux/amd64
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dockerfiles/Dockerfile
     ports:
       - "8000:8000"
     environment:

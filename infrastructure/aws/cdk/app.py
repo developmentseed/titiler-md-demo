@@ -3,12 +3,13 @@
 import os
 from typing import Any, Dict, List, Optional
 
-from aws_cdk import App, CfnOutput, Duration, Stack, Tags
+from aws_cdk import App, CfnOutput, Duration, IgnoreMode, Stack, Tags
 from aws_cdk import aws_apigatewayv2 as apigw
 from aws_cdk import aws_iam as iam
 from aws_cdk import aws_lambda
 from aws_cdk import aws_logs as logs
 from aws_cdk.aws_apigatewayv2_integrations import HttpLambdaIntegration
+from aws_cdk.aws_ecr_assets import Platform
 from config import StackSettings
 from constructs import Construct
 
@@ -37,7 +38,6 @@ class LambdaStack(Stack):
         id: str,
         memory: int = 1024,
         timeout: int = 30,
-        runtime: aws_lambda.Runtime = aws_lambda.Runtime.PYTHON_3_12,
         concurrent: Optional[int] = None,
         permissions: Optional[List[iam.PolicyStatement]] = None,
         environment: Optional[Dict] = None,
@@ -50,26 +50,42 @@ class LambdaStack(Stack):
         permissions = permissions or []
         environment = environment or {}
 
-        lambda_function = aws_lambda.Function(
+        # LAMBDA + ECR
+        lambda_function = aws_lambda.DockerImageFunction(
             self,
             f"{id}-lambda",
-            runtime=runtime,
-            code=aws_lambda.Code.from_docker_build(
-                path=os.path.abspath(context_dir),
-                file="infrastructure/aws/lambda/Dockerfile",
-                platform="linux/amd64",
+            code=aws_lambda.DockerImageCode.from_image_asset(
+                os.path.abspath(context_dir),
+                file="infrastructure/aws/lambda/ecr.Dockerfile",
+                platform=Platform.LINUX_AMD64,
+                ignore_mode=IgnoreMode.DOCKER,
             ),
-            handler="handler.handler",
+            architecture=aws_lambda.Architecture.X86_64,
             memory_size=memory,
             reserved_concurrent_executions=concurrent,
             timeout=Duration.seconds(timeout),
-            environment={
-                **DEFAULT_ENV,
-                **environment,
-                # "TITILER_XARRAY_CACHE_HOST": redis_cluster.attr_redis_endpoint_address,
-            },
+            environment={**DEFAULT_ENV, **environment},
             log_retention=logs.RetentionDays.ONE_WEEK,
         )
+
+        # PURE Lambda
+        # NOTE: Package size is too big for now so we can't use simple lambda package
+        # lambda_function = aws_lambda.Function(
+        #     self,
+        #     f"{id}-lambda",
+        #     runtime=aws_lambda.Runtime.PYTHON_3_11,
+        #     code=aws_lambda.Code.from_docker_build(
+        #         path=os.path.abspath(context_dir),
+        #         file="infrastructure/aws/lambda/lambda.Dockerfile",
+        #         platform="linux/amd64",
+        #     ),
+        #     handler="handler.handler",
+        #     memory_size=memory,
+        #     reserved_concurrent_executions=concurrent,
+        #     timeout=Duration.seconds(timeout),
+        #     environment={**DEFAULT_ENV, **environment},
+        #     log_retention=logs.RetentionDays.ONE_WEEK,
+        # )
 
         for perm in permissions:
             lambda_function.add_to_role_policy(perm)
