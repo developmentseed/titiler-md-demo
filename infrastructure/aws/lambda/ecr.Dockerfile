@@ -1,11 +1,11 @@
-ARG PYTHON_VERSION=3.11
+ARG PYTHON_VERSION=3.12
 
 FROM public.ecr.aws/lambda/python:${PYTHON_VERSION} AS builder
 
 WORKDIR /tmp
 
 # Install system dependencies to compile (numexpr)
-RUN yum install -y gcc-c++
+RUN dnf install -y gcc-c++
 
 COPY runtimes/ /tmp/runtimes
 
@@ -18,9 +18,9 @@ ENV PYTHONUSERBASE=/assets
 # we have to force using old package version that seems `almost` compatible with Lambda env botocore
 # https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html
 RUN pip install --upgrade pip
-RUN pip install /tmp/runtimes "mangum>=0.10.0" --user
+RUN pip install /tmp/runtimes "mangum>=0.10.0" "rasterio==1.3.9" "numpy~=1.0" --user
 
-RUN mv ${PYTHONUSERBASE}/lib/python3.11/site-packages/* ${PYTHONUSERBASE}/
+RUN mv ${PYTHONUSERBASE}/lib/python3.12/site-packages/* ${PYTHONUSERBASE}/
 RUN rm -rf ${PYTHONUSERBASE}/lib
 
 # Reduce package size and remove useless files
