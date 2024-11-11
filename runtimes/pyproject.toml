@@ -33,6 +33,7 @@ dependencies = [
     "starlette-cramjam>=0.4,<0.5",
     "pydantic-settings~=2.0",
     "diskcache",
+    "cftime",
 ]
 
 [project.optional-dependencies]

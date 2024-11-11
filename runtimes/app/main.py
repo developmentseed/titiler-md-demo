@@ -3,13 +3,15 @@
 import re
 
 import jinja2
-from app.settings import ApiSettings
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from starlette.templating import Jinja2Templates
 from starlette_cramjam.middleware import CompressionMiddleware
+
+from app.extensions import DimsExtension
+from app.settings import ApiSettings
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.factory import AlgorithmFactory, ColorMapFactory, TMSFactory
 from titiler.core.middleware import CacheControlMiddleware
@@ -37,6 +39,7 @@ md = TilerFactory(
     router_prefix="/md",
     extensions=[
         VariablesExtension(),
+        DimsExtension(),
     ],
 )
 app.include_router(md.router, prefix="/md", tags=["Multi Dimensional"])
