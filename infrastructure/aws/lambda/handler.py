@@ -2,8 +2,8 @@
 
 import logging
 
-from app.main import app
 from mangum import Mangum
+from titiler_md_demo.main import app
 
 logging.getLogger("mangum.lifespan").setLevel(logging.ERROR)
 logging.getLogger("mangum.http").setLevel(logging.ERROR)

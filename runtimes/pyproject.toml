@@ -1,5 +1,5 @@
 [project]
-name = "app"
+name = "titiler-md-demo"
 description = "Demo of titiler.xarray."
 requires-python = ">=3.8"
 authors = [
@@ -20,11 +20,12 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: GIS",
 ]
 dynamic = ["version"]
 dependencies = [
-    "titiler.xarray==0.19.0",
+    "titiler.xarray==0.19.2",
     "fsspec",
     "h5netcdf",
     "zarr",

@@ -9,14 +9,14 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from starlette.templating import Jinja2Templates
 from starlette_cramjam.middleware import CompressionMiddleware
-
-from app.extensions import DimsExtension
-from app.settings import ApiSettings
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.factory import AlgorithmFactory, ColorMapFactory, TMSFactory
 from titiler.core.middleware import CacheControlMiddleware
 from titiler.xarray.extensions import VariablesExtension
 from titiler.xarray.factory import TilerFactory
+
+from .extensions import DimsExtension
+from .settings import ApiSettings
 
 api_settings = ApiSettings()
 

@@ -5,13 +5,12 @@ from typing import Callable, Dict, Type
 import xarray
 from attrs import define
 from fastapi import Depends, Query
-from typing_extensions import Annotated
-
 from titiler.core.dependencies import DefaultDependency
 from titiler.core.factory import FactoryExtension
 from titiler.xarray.dependencies import XarrayIOParams
 from titiler.xarray.factory import TilerFactory
 from titiler.xarray.io import xarray_open_dataset
+from typing_extensions import Annotated
 
 
 def VariableParams(
