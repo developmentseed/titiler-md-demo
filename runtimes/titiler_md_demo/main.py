@@ -3,17 +3,20 @@
 import re
 
 import jinja2
+import rasterio
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from starlette.templating import Jinja2Templates
 from starlette_cramjam.middleware import CompressionMiddleware
+from titiler.core import __version__ as titiler_version
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.factory import AlgorithmFactory, ColorMapFactory, TMSFactory
 from titiler.core.middleware import CacheControlMiddleware
 from titiler.xarray.extensions import VariablesExtension
 from titiler.xarray.factory import TilerFactory
+
 
 from .extensions import DimsExtension
 from .settings import ApiSettings
@@ -164,3 +167,22 @@ def landing(request: Request):
             "urlparams": str(request.url.query),
         },
     )
+
+@app.get(
+    "/healthz",
+    description="Health Check.",
+    summary="Health Check.",
+    operation_id="healthCheck",
+    tags=["Health Check"],
+)
+def application_health_check():
+    """Health check."""
+    return {
+        "versions": {
+            "titiler": titiler_version,
+            "rasterio": rasterio.__version__,
+            "gdal": rasterio.__gdal_version__,
+            "proj": rasterio.__proj_version__,
+            "geos": rasterio.__geos_version__,
+        }
+    }
