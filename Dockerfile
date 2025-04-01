@@ -14,11 +14,12 @@ RUN update-ca-certificates
 ENV CURL_CA_BUNDLE /etc/ssl/certs/ca-certificates.crt
 
 RUN python -m pip install -U pip
+RUN python -m pip install uvicorn
 
 COPY runtimes/ /tmp/runtimes
-RUN python -m pip install /tmp/runtimes uvicorn --no-cache-dir --upgrade
+RUN python -m pip install /tmp/runtimes --no-cache-dir --upgrade
 RUN rm -rf /tmp/runtimes
 
 ENV HOST 0.0.0.0
 ENV PORT 80
-CMD uvicorn titiler_md_demo.main:app --host ${HOST} --port ${PORT}```
+CMD uvicorn titiler_md_demo.main:app --host ${HOST} --port ${PORT}
