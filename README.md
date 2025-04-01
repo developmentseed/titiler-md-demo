@@ -16,7 +16,7 @@ python -m venv .venv
 source .venv/bin/activate
 
 python -m pip install -e runtimes/ uvicorn
-uvicorn runtimes.titiler_md_demo.main:app --reload
+uvicorn titiler_md_demo.main:app --reload
 ```
 
 ## Deployments
