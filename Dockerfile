@@ -21,4 +21,4 @@ RUN rm -rf /tmp/runtimes
 
 ENV HOST 0.0.0.0
 ENV PORT 80
-CMD uvicorn runtimes.titiler_md_demo.main:app --host ${HOST} --port ${PORT}
+CMD uvicorn titiler_md_demo.main:app --host ${HOST} --port ${PORT}```
