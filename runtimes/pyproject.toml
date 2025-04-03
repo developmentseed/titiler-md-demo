@@ -25,7 +25,7 @@ classifiers = [
 ]
 dynamic = ["version"]
 dependencies = [
-    "titiler.xarray==0.19.2",
+    "titiler.xarray==0.21.1",
     "fsspec",
     "h5netcdf",
     "zarr",

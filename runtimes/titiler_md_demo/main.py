@@ -1,7 +1,5 @@
 """app."""
 
-import re
-
 import jinja2
 import rasterio
 from fastapi import FastAPI
@@ -10,13 +8,13 @@ from starlette.requests import Request
 from starlette.responses import HTMLResponse
 from starlette.templating import Jinja2Templates
 from starlette_cramjam.middleware import CompressionMiddleware
+
 from titiler.core import __version__ as titiler_version
 from titiler.core.errors import DEFAULT_STATUS_CODES, add_exception_handlers
 from titiler.core.factory import AlgorithmFactory, ColorMapFactory, TMSFactory
 from titiler.core.middleware import CacheControlMiddleware
 from titiler.xarray.extensions import VariablesExtension
 from titiler.xarray.factory import TilerFactory
-
 
 from .extensions import DimsExtension
 from .settings import ApiSettings
@@ -39,13 +37,12 @@ app = FastAPI(
 
 
 md = TilerFactory(
-    router_prefix="/md",
     extensions=[
         VariablesExtension(),
         DimsExtension(),
     ],
 )
-app.include_router(md.router, prefix="/md", tags=["Multi Dimensional"])
+app.include_router(md.router, tags=["Multi Dimensional"])
 
 # TileMatrixSets endpoints
 app.include_router(TMSFactory().router, tags=["Tiling Schemes"])
@@ -136,12 +133,16 @@ def landing(request: Request):
     }
 
     urlpath = request.url.path
-    if root_path := request.app.root_path:
-        urlpath = re.sub(r"^" + root_path, "", urlpath)
+    if root_path := request.scope.get("root_path"):
+        urlpath = urlpath.removeprefix(root_path)
+
     crumbs = []
     baseurl = str(request.base_url).rstrip("/")
 
     crumbpath = str(baseurl)
+    if urlpath == "/":
+        urlpath = ""
+
     for crumb in urlpath.split("/"):
         crumbpath = crumbpath.rstrip("/")
         part = crumb
@@ -161,12 +162,9 @@ def landing(request: Request):
                 "title": "TiTiler",
             },
             "crumbs": crumbs,
-            "url": str(request.url),
-            "baseurl": baseurl,
-            "urlpath": str(request.url.path),
-            "urlparams": str(request.url.query),
         },
     )
+
 
 @app.get(
     "/healthz",
