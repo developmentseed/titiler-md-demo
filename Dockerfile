@@ -20,6 +20,12 @@ COPY runtimes/ /tmp/runtimes
 RUN python -m pip install /tmp/runtimes --no-cache-dir --upgrade
 RUN rm -rf /tmp/runtimes
 
+RUN groupadd -g 1000 user && \
+    useradd -u 1000 -g user -s /bin/bash -m user
+
+USER user
+
 ENV HOST 0.0.0.0
 ENV PORT 80
+
 CMD uvicorn titiler_md_demo.main:app --host ${HOST} --port ${PORT}
