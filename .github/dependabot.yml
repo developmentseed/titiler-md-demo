@@ -1,0 +1,60 @@
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns:
+        - "*"
+
+  # Reads runtimes/uv.lock, which the pip ecosystem does not.
+  - package-ecosystem: "uv"
+    directory: "/runtimes"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 7
+    allow:
+    # Include transitive dependencies (e.g. certifi, urllib3): they ship in the image.
+    - dependency-type: "all"
+    ignore:
+    # Newer titiler.xarray releases change the API this app uses: upgrade by hand.
+    - dependency-name: "titiler.xarray"
+      update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      # Majors get their own PR so they do not hold back the minor/patch bumps.
+      python:
+        patterns:
+        - "*"
+        update-types: ["minor", "patch"]
+      python-major:
+        patterns:
+        - "*"
+        update-types: ["major"]
+      # Keeps security PRs grouped even if the repo-level setting is turned off.
+      security:
+        applies-to: security-updates
+        patterns:
+        - "*"
+
+  # The base image digest carries the Debian fixes, and each merge rebuilds the image.
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    # Official python tags are often re-pushed within a week, and a digest-only
+    # refresh waits out the cooldown: 7 days would skip most weekly runs.
+    cooldown:
+      default-days: 3
+    ignore:
+    # Stay on Python 3.12 (supported until October 2028) until a deliberate upgrade.
+    - dependency-name: "python"
+      update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      docker:
+        patterns:
+        - "*"
