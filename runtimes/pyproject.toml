@@ -1,7 +1,7 @@
 [project]
 name = "titiler-md-demo"
 description = "Demo of titiler.xarray."
-requires-python = ">=3.8"
+requires-python = ">=3.12,<3.13"
 authors = [
     {name = "Vincent Sarago", email = "vincent@developmentseed.com"},
 ]
@@ -16,10 +16,6 @@ classifiers = [
     "Intended Audience :: Information Technology",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Scientific/Engineering :: GIS",
 ]
@@ -27,7 +23,7 @@ dynamic = ["version"]
 dependencies = [
     "titiler.xarray==0.21.1",
     "fsspec",
-    "h5netcdf",
+    "h5netcdf[h5py]",
     "zarr",
     "s3fs",
     "aiohttp",
@@ -51,6 +47,9 @@ Homepage = "https://github.com/developmentseed/titiler-md-demo"
 [build-system]
 requires = ["flit_core>=3.2,<4"]
 build-backend = "flit_core.buildapi"
+
+[tool.uv]
+environments = ["sys_platform == 'linux'"]
 
 [tool.coverage.run]
 branch = true

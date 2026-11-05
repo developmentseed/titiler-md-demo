@@ -152,6 +152,7 @@ def landing(request: Request):
         crumbs.append({"url": crumbpath.rstrip("/"), "part": part.capitalize()})
 
     return templates.TemplateResponse(
+        request,
         "index.html",
         {
             "request": request,

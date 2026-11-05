@@ -11,8 +11,8 @@
 ```bash
 git clone https://github.com/developmentseed/titiler-md-demo.git
 
-# It's recommended to install dependencies in a virtual environment
-python -m venv .venv
+# It's recommended to install dependencies in a virtual environment (Python 3.12 is required)
+python3.12 -m venv .venv
 source .venv/bin/activate
 
 python -m pip install -e runtimes/ uvicorn
