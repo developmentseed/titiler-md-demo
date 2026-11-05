@@ -27,7 +27,7 @@ dependencies = [
     "zarr",
     "s3fs",
     "aiohttp",
-    "starlette-cramjam>=0.4,<0.5",
+    "starlette-cramjam>=0.4,<0.8",
     "pydantic-settings~=2.0",
     "diskcache",
     "cftime",
