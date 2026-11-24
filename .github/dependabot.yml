@@ -35,11 +35,7 @@ updates:
         patterns:
         - "*"
         update-types: ["major"]
-      # Keeps security PRs grouped even if the repo-level setting is turned off.
-      security:
-        applies-to: security-updates
-        patterns:
-        - "*"
+      # No security-updates group: while a grouped security PR is open, Dependabot defers fixes for packages not already in it.
 
   # The base image digest carries the Debian fixes, and each merge rebuilds the image.
   - package-ecosystem: "docker"
